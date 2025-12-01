@@ -10,12 +10,13 @@ export const taskService = {
       }
 
       const response = await apperClient.fetchRecords('task_c', {
-        fields: [
+fields: [
           {"field": {"Name": "Id"}},
           {"field": {"Name": "title_c"}},
           {"field": {"Name": "description_c"}},
           {"field": {"Name": "priority_c"}},
           {"field": {"Name": "status_c"}},
+          {"field": {"Name": "files_c"}},
           {"field": {"Name": "CreatedOn"}},
           {"field": {"Name": "completed_at_c"}}
         ],
@@ -35,6 +36,7 @@ export const taskService = {
         description: task.description_c || "",
         priority: task.priority_c || "medium",
         status: task.status_c || "active",
+files: task.files_c || [],
         createdAt: task.CreatedOn,
         completedAt: task.completed_at_c
       }));
@@ -55,9 +57,10 @@ export const taskService = {
         fields: [
           {"field": {"Name": "Id"}},
           {"field": {"Name": "title_c"}},
-          {"field": {"Name": "description_c"}},
+{"field": {"Name": "description_c"}},
           {"field": {"Name": "priority_c"}},
           {"field": {"Name": "status_c"}},
+          {"field": {"Name": "files_c"}},
           {"field": {"Name": "CreatedOn"}},
           {"field": {"Name": "completed_at_c"}}
         ]
@@ -76,6 +79,7 @@ export const taskService = {
         description: task.description_c || "",
         priority: task.priority_c || "medium",
         status: task.status_c || "active",
+files: task.files_c || [],
         createdAt: task.CreatedOn,
         completedAt: task.completed_at_c
       };
@@ -85,7 +89,7 @@ export const taskService = {
     }
   },
 
-  async create(taskData) {
+async create(taskData) {
     try {
       const apperClient = getApperClient();
       if (!apperClient) {
@@ -129,6 +133,7 @@ export const taskService = {
             description: task.description_c || "",
             priority: task.priority_c || "medium",
             status: task.status_c || "active",
+            files: task.files_c || [],
             createdAt: task.CreatedOn,
             completedAt: task.completed_at_c
           };

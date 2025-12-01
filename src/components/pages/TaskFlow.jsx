@@ -37,10 +37,24 @@ const TaskFlow = () => {
   }, [])
 
   const handleAddTask = async (taskData) => {
-    try {
+try {
       const newTask = await taskService.create(taskData)
+      
+      // If task created successfully and has files, create file records
+      if (newTask && taskData.files_c && taskData.files_c.length > 0) {
+        try {
+          const fileService = await import('@/services/api/fileService').then(m => m.fileService);
+          await fileService.create({ file_data_c: taskData.files_c }, newTask.Id);
+          toast.success("Task and files added successfully!");
+        } catch (fileError) {
+          console.error("Error creating files:", fileError);
+          toast.warning("Task created but files could not be attached");
+        }
+      } else {
+        toast.success("Task added successfully!");
+      }
+      
       setTasks(prev => [newTask, ...prev])
-      toast.success("Task added successfully!")
     } catch (err) {
       toast.error("Failed to add task")
       console.error("Error adding task:", err)
@@ -201,7 +215,7 @@ const TaskFlow = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
         >
-          <TaskForm onAddTask={handleAddTask} />
+<TaskForm onAddTask={handleAddTask} />
         </motion.div>
 
         {/* Filters and Sort */}

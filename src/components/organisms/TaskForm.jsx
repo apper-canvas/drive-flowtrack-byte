@@ -1,15 +1,17 @@
-import { useState } from "react"
-import { motion } from "framer-motion"
-import Button from "@/components/atoms/Button"
-import Input from "@/components/atoms/Input"
-import Select from "@/components/atoms/Select"
-import Textarea from "@/components/atoms/Textarea"
-import ApperIcon from "@/components/ApperIcon"
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import ApperIcon from "@/components/ApperIcon";
+import ApperFileFieldComponent from "@/components/ApperFileFieldComponent";
+import Textarea from "@/components/atoms/Textarea";
+import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
+import Input from "@/components/atoms/Input";
 
 const TaskForm = ({ onAddTask }) => {
-  const [title, setTitle] = useState("")
+const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [priority, setPriority] = useState("medium")
+  const [uploadedFiles, setUploadedFiles] = useState([])
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -34,15 +36,27 @@ const TaskForm = ({ onAddTask }) => {
     setIsSubmitting(true)
     
     try {
+// Get files from the file uploader component
+      let files = [];
+      if (window.ApperSDK) {
+        const { ApperFileUploader } = window.ApperSDK;
+        try {
+          files = await ApperFileUploader.FileField.getFiles('files_c') || uploadedFiles;
+        } catch (error) {
+          console.error("Error getting files:", error);
+          files = uploadedFiles;
+        }
+      }
+
       await onAddTask({
         title: title.trim(),
         description: description.trim(),
         priority,
         status: "active",
         createdAt: new Date().toISOString(),
-        completedAt: null
+        completedAt: null,
+        files_c: files
       })
-      
       // Reset form
       setTitle("")
       setDescription("")
@@ -123,6 +137,24 @@ const TaskForm = ({ onAddTask }) => {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Add more details about this task..."
               rows={3}
+/>
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-slate-700">
+              File Attachments
+            </label>
+            <ApperFileFieldComponent
+              elementId="files_c"
+              config={{
+                fieldKey: 'files_c',
+                fieldName: 'files_c',
+                tableName: 'task_c',
+                apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+                apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY,
+                existingFiles: uploadedFiles,
+                fileCount: uploadedFiles?.length || 0
+              }}
             />
           </div>
 
