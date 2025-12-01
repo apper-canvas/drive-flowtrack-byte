@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import ApperIcon from "@/components/ApperIcon";
-import ApperFileFieldComponent from "@/components/ApperFileFieldComponent";
+import ApperFileFieldComponent from "@/components/atoms/FileUploader";
 import Textarea from "@/components/atoms/Textarea";
 import Select from "@/components/atoms/Select";
 import Button from "@/components/atoms/Button";
